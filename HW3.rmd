@@ -1,0 +1,61 @@
+---
+title: "HW3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+##Name: Danny Miller
+##ID: 9079362399
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(nycflights13)
+library(tidyverse)
+
+flight_info <- flights
+
+no_dep <- flight_info %>%
+  filter(is.na(dep_time))
+
+head(no_dep)
+##1. There are 8,255 flgihts without a departure time. Other columns that are NA for these flights are dep_delay, arr_time, arr_delay, and air_time. Judging from these other missing values I would say it can be assumed that these flights never took off at all. This would explain how delay times could not be calculated as well as the missing airtime value.
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+##2.
+
+
+flight_info$sched_dep_time <- (flight_info$hour*60) + flight_info$minute
+
+flight_info$dep_time <- flight_info$sched_dep_time + flight_info$dep_delay
+
+head(flight_info)
+
+```
+
+```{r}
+##3. 
+
+daily <- flights%>%
+  group_by(day, month, year)%>%
+  summarize(delay = mean(dep_delay, na.rm = TRUE), cancellations = sum(is.na(dep_delay)/n()))
+
+ggplot(daily, aes(x=delay, y=cancellations))+
+  geom_point()
+
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
